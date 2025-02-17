@@ -1,0 +1,90 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:../src/database/pi.db"
+}
+
+model Usuarios {
+  Matricula String @id
+  Name      String
+  ativo     Boolean @default(true)
+}
+
+
+model Operacao {
+  id        Int     @id @default(autoincrement())
+  dadosId   Int?    @unique
+  dados     Dados?  @relation(fields: [dadosId], references: [id] ,onDelete: Cascade)
+  nominalId Int?    @unique
+  nominal   Nominal? @relation(fields: [nominalId], references: [id],onDelete: Cascade)
+  revId     Int?    @unique
+  rev       Rev?     @relation(fields: [revId], references: [id],onDelete: Cascade)
+  durezaId  Int?    @unique
+  dureza    Dureza? @relation(fields: [durezaId], references: [id],onDelete: Cascade)
+  oilId     Int?    @unique
+  oil       Oil?     @relation(fields: [oilId], references: [id],onDelete: Cascade)
+  toc       DateTime @default(now())
+  tom       DateTime? @updatedAt
+}
+
+model Dados {
+  id         Int    @id @default(autoincrement())
+  equipamento String
+  horario     String
+  item        String
+  bobina      String
+  operacaoId  Int   @unique
+  operacao    Operacao?  
+}
+
+model Nominal {
+  id         Int    @id @default(autoincrement())
+  superior   Float
+  inferior   Float
+  operacaoId Int   @unique
+  operacao   Operacao?  
+}
+
+model Rev {
+  id         Int    @id @default(autoincrement())
+  esqSup     Float
+  centroSup  Float
+  dirSup     Float
+  esqInf     Float
+  centroInf  Float
+  dirInf     Float
+  ligaSup    Float
+  ligaInf    Float
+  mediaSup   Float
+  mediaInf   Float
+  dispSup    Float
+  dispInf    Float
+  operacaoId Int   @unique
+  operacao   Operacao?  
+}
+
+model Dureza {
+  id         Int    @id @default(autoincrement())
+  esq        Int
+  centro     Int
+  dir        Int
+  operacaoId Int   @unique
+  operacao   Operacao?  
+}
+
+model Oil {
+  id         Int    @id @default(autoincrement())
+  esqSup     Float
+  centroSup  Float
+  dirSup     Float
+  mediaSup   Float
+  esqInf     Float
+  centroInf  Float
+  dirInf     Float
+  mediaInf   Float
+  operacaoId Int   @unique
+  operacao   Operacao?  
+}
