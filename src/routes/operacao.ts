@@ -76,17 +76,17 @@ operacao.get("/operacao/consultar", async (req: Request, res: Response) => {
 
       switch (Turno) {
         case "Turno - 1":
-          dataInicio.setDate(dataInicio.getDate() - 1); // Dia anterior
-          dataInicio.setUTCHours(23, 0, 0, 0); // Horário em UTC
-          dataFim.setUTCHours(6, 59, 59, 999); // Horário em UTC
+          dataInicio.setUTCHours(2, 0, 0, 0); // Horário em UTC
+          dataFim.setUTCHours(9, 59, 59, 999); // Horário em UTC
           break;
         case "Turno - 2":
-          dataInicio.setUTCHours(7, 0, 0, 0); // Horário em UTC
-          dataFim.setUTCHours(14, 59, 59, 999); // Horário em UTC
+          dataInicio.setUTCHours(10, 0, 0, 0); // Horário em UTC
+          dataFim.setUTCHours(17, 59, 59, 999); // Horário em UTC
           break;
         case "Turno - 3":
-          dataInicio.setUTCHours(15, 0, 0, 0); // Horário em UTC
-          dataFim.setUTCHours(22, 59, 59, 999); // Horário em UTC
+          dataFim.setDate(dataFim.getDate() + 1); //dia seguinte caio domingues!
+          dataInicio.setUTCHours(18, 0, 0, 0); // Horário em UTC
+          dataFim.setUTCHours(1, 59, 59, 999); // Horário em UTC
           break;
         default:
           return res.status(400).json({ error: "Turno inválido" });
@@ -267,6 +267,143 @@ operacao.delete("/operacao/delete/:id", async (req: Request, res: Response) => {
     return res
       .status(500)
       .json({ error: "Erro ao deletar operação.", detalhes: error });
+  }
+});
+
+operacao.patch("/operacao/edit/:id", async (req: Request, res: Response) => {
+  const operacaoId = parseInt(req.params.id);
+  const novosDados = req.body;
+
+  if (isNaN(operacaoId)) {
+    return res.status(400).json({ error: "ID inválido!" });
+  }
+
+  try {
+    const resultado = await prisma.$transaction(
+      async (tx: Prisma.TransactionClient) => {
+        const operacaoEditada = await tx.operacao.update({
+          where: { id: operacaoId },
+          data: {
+            toc: novosDados.toc,
+            tom: novosDados.tom,
+            dados: {
+              update: {
+                equipamento: novosDados.dados.equipamento,
+                horario: novosDados.dados.horario,
+                item: novosDados.dados.item,
+                bobina: novosDados.dados.bobina,
+              },
+            },
+            nominal: {
+              update: {
+                superior: parseFloat(novosDados.nominal.superior),
+                inferior: parseFloat(novosDados.nominal.inferior),
+              },
+            },
+            rev: {
+              update: {
+                esqSup: parseFloat(novosDados.rev.esqSup),
+                centroSup: parseFloat(novosDados.rev.centroSup),
+                dirSup: parseFloat(novosDados.rev.dirSup),
+                esqInf: parseFloat(novosDados.rev.esqInf),
+                centroInf: parseFloat(novosDados.rev.centroInf),
+                dirInf: parseFloat(novosDados.rev.dirInf),
+                ligaSup: parseFloat(novosDados.rev.ligaSup),
+                ligaInf: parseFloat(novosDados.rev.ligaInf),
+                mediaSup: parseFloat(novosDados.rev.mediaSup),
+                mediaInf: parseFloat(novosDados.rev.mediaInf),
+                dispSup: parseFloat(novosDados.rev.dispSup),
+                dispInf: parseFloat(novosDados.rev.dispInf),
+              },
+            },
+            dureza: {
+              update: {
+                esq: novosDados.dureza.esq,
+                centro: novosDados.dureza.centro,
+                dir: novosDados.dureza.dir,
+              },
+            },
+            oil: {
+              update: {
+                esqSup: parseFloat(novosDados.oil.esqSup),
+                centroSup: parseFloat(novosDados.oil.centroSup),
+                dirSup: parseFloat(novosDados.oil.dirSup),
+                mediaSup: parseFloat(novosDados.oil.mediaSup),
+                esqInf: parseFloat(novosDados.oil.esqInf),
+                centroInf: parseFloat(novosDados.oil.centroInf),
+                dirInf: parseFloat(novosDados.oil.dirInf),
+                mediaInf: parseFloat(novosDados.oil.mediaInf),
+              },
+            },
+          },
+        });
+
+        const operacaoRev = await tx.rev.updateMany({
+          where: { operacaoId: operacaoId }, // Certifique-se de que `operacaoId` seja um número
+          data: {
+            esqSup: parseFloat(novosDados.rev.esqSup),
+            centroSup: parseFloat(novosDados.rev.centroSup),
+            dirSup: parseFloat(novosDados.rev.dirSup),
+            esqInf: parseFloat(novosDados.rev.esqInf),
+            centroInf: parseFloat(novosDados.rev.centroInf),
+            dirInf: parseFloat(novosDados.rev.dirInf),
+            ligaSup: parseFloat(novosDados.rev.ligaSup),
+            ligaInf: parseFloat(novosDados.rev.ligaInf),
+            mediaSup: parseFloat(novosDados.rev.mediaSup),
+            mediaInf: parseFloat(novosDados.rev.mediaInf),
+            dispSup: parseFloat(novosDados.rev.dispSup),
+            dispInf: parseFloat(novosDados.rev.dispInf),
+            operacaoId: operacaoId, // Garante que `operacaoId` seja um número inteiro
+          },
+        });
+
+        const operacaoDados = await tx.dados.updateMany({
+          where: { operacaoId: operacaoId },
+          data: novosDados.dados,
+        });
+
+        const operacaoDureza = await tx.dureza.updateMany({
+          where: { operacaoId: operacaoId },
+          data: novosDados.dureza,
+        });
+
+        const operacaoNominal = await tx.nominal.updateMany({
+          where: { operacaoId: operacaoId },
+          data: {
+            superior: parseFloat(novosDados.nominal.superior),
+            inferior: parseFloat(novosDados.nominal.inferior),
+          },
+        });
+
+        const operacaoOil = await tx.oil.updateMany({
+          where: { operacaoId: operacaoId },
+          data: {
+            esqSup: parseFloat(novosDados.oil.esqSup),
+            centroSup: parseFloat(novosDados.oil.centroSup),
+            dirSup: parseFloat(novosDados.oil.dirSup),
+            esqInf: parseFloat(novosDados.oil.esqInf),
+            centroInf: parseFloat(novosDados.oil.centroInf),
+            dirInf: parseFloat(novosDados.oil.dirInf),
+            mediaSup: parseFloat(novosDados.oil.mediaSup),
+            mediaInf: parseFloat(novosDados.oil.mediaInf),
+            operacaoId: operacaoId, // Garante que `operacaoId` seja um número inteiro
+          },
+        });
+
+        return {
+          operacaoEditada,
+          operacaoRev,
+          operacaoDados,
+          operacaoDureza,
+          operacaoNominal,
+          operacaoOil,
+        };
+      }
+    );
+    res.json({ message: "Operação editar com sucesso!", resultado });
+  } catch (error) {
+    console.error("Erro ao editar:", error);
+    return res.status(500).json({ "Erro ao editar": error });
   }
 });
 
