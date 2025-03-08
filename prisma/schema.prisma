@@ -88,3 +88,16 @@ model Oil {
   operacaoId Int?   @unique
   operacao   Operacao?  
 }
+
+model Tracion {
+  id Int  @id @default(autoincrement())
+  Tempera String 
+  Item String 
+  Bobina String 
+  Espessura Float
+  LE Float?
+  LR Float? 
+  Alogamento Float?
+  R Float?
+  N Float? 
+}
