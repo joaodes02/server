@@ -100,4 +100,6 @@ model Tracion {
   Alogamento Float?
   R Float?
   N Float? 
+  toc  DateTime @default(now())
+  tom  DateTime? @updatedAt
 }
