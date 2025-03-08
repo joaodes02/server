@@ -284,7 +284,6 @@ operacao.patch("/operacao/edit/:id", async (req: Request, res: Response) => {
         const operacaoEditada = await tx.operacao.update({
           where: { id: operacaoId },
           data: {
-            toc: novosDados.toc,
             tom: novosDados.tom,
             dados: {
               update: {

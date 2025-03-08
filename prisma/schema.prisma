@@ -31,60 +31,60 @@ model Operacao {
 }
 
 model Dados {
-  id         Int    @id @default(autoincrement())
-  equipamento String
-  horario     String
-  item        String
-  bobina      String
-  operacaoId  Int   @unique
+  id         Int   @id @default(autoincrement())
+  equipamento String?
+  horario     String?
+  item        String?
+  bobina      String?
+  operacaoId  Int?   @unique
   operacao    Operacao?  
 }
 
 model Nominal {
   id         Int    @id @default(autoincrement())
-  superior   Float
-  inferior   Float
-  operacaoId Int   @unique
+  superior   Float?
+  inferior   Float?
+  operacaoId Int?   @unique
   operacao   Operacao?  
 }
 
 model Rev {
-  id         Int    @id @default(autoincrement())
-  esqSup     Float
-  centroSup  Float
-  dirSup     Float
-  esqInf     Float
-  centroInf  Float
-  dirInf     Float
-  ligaSup    Float
-  ligaInf    Float
-  mediaSup   Float
-  mediaInf   Float
-  dispSup    Float
-  dispInf    Float
-  operacaoId Int   @unique
+  id         Int   @id @default(autoincrement())
+  esqSup     Float?
+  centroSup  Float?
+  dirSup     Float?
+  esqInf     Float?
+  centroInf  Float?
+  dirInf     Float?
+  ligaSup    Float?
+  ligaInf    Float?
+  mediaSup   Float?
+  mediaInf   Float?
+  dispSup    Float?
+  dispInf    Float?
+  operacaoId Int?   @unique
   operacao   Operacao?  
 }
 
 model Dureza {
   id         Int    @id @default(autoincrement())
-  esq        Int
-  centro     Int
-  dir        Int
-  operacaoId Int   @unique
+  esq        Int?
+  centro     Int?
+  dir        Int?
+  operacaoId Int?   @unique
   operacao   Operacao?  
 }
 
 model Oil {
-  id         Int    @id @default(autoincrement())
-  esqSup     Float
-  centroSup  Float
-  dirSup     Float
-  mediaSup   Float
-  esqInf     Float
-  centroInf  Float
-  dirInf     Float
-  mediaInf   Float
-  operacaoId Int   @unique
+  id         Int  @id @default(autoincrement())
+  esqSup     Float?
+  centroSup  Float?
+  dirSup     Float?
+  mediaSup   Float?
+  esqInf     Float?
+  centroInf  Float?
+  dirInf     Float?
+  mediaInf   Float?
+  operacaoId Int?   @unique
   operacao   Operacao?  
 }
